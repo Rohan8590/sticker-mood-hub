@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { CartItem } from '@/context/CartContext';
 import { toast } from 'sonner';
 import JSZip from 'jszip';
+import StickerImage from '@/components/StickerImage';
 
 export interface Order {
   id: string;
@@ -24,6 +25,19 @@ const OrderHistory = () => {
     }
   }, []);
 
+  // Fetch image as blob for ZIP
+  const fetchImageAsBlob = async (url: string): Promise<Blob | null> => {
+    try {
+      const response = await fetch(url);
+      if (response.ok) {
+        return await response.blob();
+      }
+    } catch (error) {
+      console.error('Failed to fetch image:', url, error);
+    }
+    return null;
+  };
+
   const downloadOrderAsZip = async (order: Order) => {
     const zip = new JSZip();
     
@@ -42,7 +56,7 @@ Total Paid: ₹${order.totalPrice}
 Thank you for your purchase! 💜
 
 This ZIP contains ${order.items.length} sticker pack(s).
-Each pack has its own folder with sticker info.
+Each pack has its own folder with sticker images.
 
 To use these stickers:
 1. Open WhatsApp/Telegram
@@ -53,7 +67,7 @@ Enjoy adding mood to your chats! ✨
     `.trim());
 
     // Add each sticker pack as a subfolder
-    order.items.forEach((item) => {
+    for (const item of order.items) {
       const packFolder = orderFolder.folder(item.name.replace(/\s+/g, '_'));
       if (packFolder) {
         packFolder.file('pack_info.txt', `
@@ -61,16 +75,19 @@ Sticker Pack: ${item.name}
 Category: ${item.category}
 Description: ${item.description}
 Price: ₹${item.price}
-
-Stickers included: ${item.thumbnails.join(' ')}
         `.trim());
         
-        // Create placeholder sticker files
-        item.thumbnails.forEach((emoji, index) => {
-          packFolder.file(`sticker_${index + 1}.txt`, `Sticker ${index + 1}: ${emoji}`);
-        });
+        // Add sticker images
+        for (let index = 0; index < item.thumbnails.length; index++) {
+          const imagePath = item.thumbnails[index];
+          const blob = await fetchImageAsBlob(imagePath);
+          if (blob) {
+            const extension = imagePath.split('.').pop() || 'png';
+            packFolder.file(`sticker_${index + 1}.${extension}`, blob);
+          }
+        }
       }
-    });
+    }
 
     // Generate and download ZIP
     const content = await zip.generateAsync({ type: 'blob' });
@@ -160,9 +177,14 @@ Stickers included: ${item.thumbnails.join(' ')}
                       {item.thumbnails.slice(0, 3).map((thumb, i) => (
                         <div
                           key={i}
-                          className="w-10 h-10 bg-background rounded-xl flex items-center justify-center text-xl"
+                          className="w-10 h-10 bg-background rounded-xl overflow-hidden"
                         >
-                          {thumb}
+                          <StickerImage
+                            src={thumb}
+                            alt={`${item.name} sticker ${i + 1}`}
+                            className="w-full h-full"
+                            fallbackEmoji={['😂', '💕', '🔥'][i % 3]}
+                          />
                         </div>
                       ))}
                     </div>
