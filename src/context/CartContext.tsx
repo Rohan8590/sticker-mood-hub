@@ -4,10 +4,13 @@ export interface StickerPack {
   id: string;
   name: string;
   category: string;
+  categoryId?: string;
   description: string;
   thumbnails: string[];
   price: number;
 }
+
+export type CartItem = StickerPack;
 
 interface CartContextType {
   items: StickerPack[];
