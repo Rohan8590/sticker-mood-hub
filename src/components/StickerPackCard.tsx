@@ -2,6 +2,7 @@ import { Check, ShoppingCart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useCart, StickerPack } from '@/context/CartContext';
 import { toast } from 'sonner';
+import StickerImage from './StickerImage';
 
 interface StickerPackCardProps {
   pack: StickerPack;
@@ -25,10 +26,15 @@ const StickerPackCard = ({ pack }: StickerPackCardProps) => {
         {pack.thumbnails.map((thumb, i) => (
           <div
             key={i}
-            className="aspect-square rounded-2xl bg-muted flex items-center justify-center text-3xl group-hover:animate-bounce-slow"
+            className="aspect-square rounded-2xl bg-muted overflow-hidden group-hover:scale-105 transition-transform duration-300"
             style={{ animationDelay: `${i * 0.1}s` }}
           >
-            {thumb}
+            <StickerImage
+              src={thumb}
+              alt={`${pack.name} sticker ${i + 1}`}
+              className="w-full h-full"
+              fallbackEmoji={['😂', '💕', '🔥', '✨'][i % 4]}
+            />
           </div>
         ))}
       </div>

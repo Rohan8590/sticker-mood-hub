@@ -6,6 +6,7 @@ import { useCart, CartItem } from '@/context/CartContext';
 import { toast } from 'sonner';
 import JSZip from 'jszip';
 import { Order } from './OrderHistory';
+import StickerImage from '@/components/StickerImage';
 
 const Cart = () => {
   const { items, removeFromCart, clearCart, totalPrice } = useCart();
@@ -51,6 +52,19 @@ const Cart = () => {
     clearCart();
   };
 
+  // Fetch image as blob for ZIP
+  const fetchImageAsBlob = async (url: string): Promise<Blob | null> => {
+    try {
+      const response = await fetch(url);
+      if (response.ok) {
+        return await response.blob();
+      }
+    } catch (error) {
+      console.error('Failed to fetch image:', url, error);
+    }
+    return null;
+  };
+
   const downloadAllAsZip = async () => {
     const zip = new JSZip();
     
@@ -65,7 +79,7 @@ const Cart = () => {
 Thank you for your purchase! 💜
 
 This ZIP contains ${purchasedItems.length} sticker pack(s).
-Each pack has its own folder with sticker info.
+Each pack has its own folder with sticker images.
 
 To use these stickers:
 1. Open WhatsApp/Telegram
@@ -76,7 +90,7 @@ Enjoy adding mood to your chats! ✨
     `.trim());
 
     // Add each sticker pack as a subfolder
-    purchasedItems.forEach((item) => {
+    for (const item of purchasedItems) {
       const packFolder = mainFolder.folder(item.name.replace(/\s+/g, '_'));
       if (packFolder) {
         packFolder.file('pack_info.txt', `
@@ -84,16 +98,19 @@ Sticker Pack: ${item.name}
 Category: ${item.category}
 Description: ${item.description}
 Price: ₹${item.price}
-
-Stickers included: ${item.thumbnails.join(' ')}
         `.trim());
         
-        // Create placeholder sticker files
-        item.thumbnails.forEach((emoji, index) => {
-          packFolder.file(`sticker_${index + 1}.txt`, `Sticker ${index + 1}: ${emoji}`);
-        });
+        // Add sticker images
+        for (let index = 0; index < item.thumbnails.length; index++) {
+          const imagePath = item.thumbnails[index];
+          const blob = await fetchImageAsBlob(imagePath);
+          if (blob) {
+            const extension = imagePath.split('.').pop() || 'png';
+            packFolder.file(`sticker_${index + 1}.${extension}`, blob);
+          }
+        }
       }
-    });
+    }
 
     // Generate and download ZIP
     const content = await zip.generateAsync({ type: 'blob' });
@@ -123,8 +140,6 @@ Price: ₹${item.price}
 
 Thank you for purchasing from Sticker.mood! 💜
 
-Stickers included: ${item.thumbnails.join(' ')}
-
 To use these stickers:
 1. Open WhatsApp/Telegram
 2. Go to sticker settings
@@ -133,10 +148,15 @@ To use these stickers:
 Enjoy adding mood to your chats! ✨
     `.trim());
     
-    // Create placeholder sticker files
-    item.thumbnails.forEach((emoji, index) => {
-      packFolder.file(`sticker_${index + 1}.txt`, `Sticker ${index + 1}: ${emoji}`);
-    });
+    // Add sticker images
+    for (let index = 0; index < item.thumbnails.length; index++) {
+      const imagePath = item.thumbnails[index];
+      const blob = await fetchImageAsBlob(imagePath);
+      if (blob) {
+        const extension = imagePath.split('.').pop() || 'png';
+        packFolder.file(`sticker_${index + 1}.${extension}`, blob);
+      }
+    }
 
     const content = await zip.generateAsync({ type: 'blob' });
     const url = URL.createObjectURL(content);
@@ -197,7 +217,14 @@ Enjoy adding mood to your chats! ✨
                 {purchasedItems.map((item) => (
                   <div key={item.id} className="flex items-center justify-between p-3 bg-muted rounded-2xl">
                     <div className="flex items-center gap-3">
-                      <span className="text-2xl">{item.thumbnails[0]}</span>
+                      <div className="w-10 h-10 rounded-xl overflow-hidden bg-background">
+                        <StickerImage
+                          src={item.thumbnails[0]}
+                          alt={item.name}
+                          className="w-full h-full"
+                          fallbackEmoji="🎭"
+                        />
+                      </div>
                       <span className="font-semibold">{item.name}</span>
                     </div>
                     <Button
@@ -349,9 +376,14 @@ Enjoy adding mood to your chats! ✨
                   {item.thumbnails.slice(0, 2).map((thumb, i) => (
                     <div
                       key={i}
-                      className="w-12 h-12 bg-muted rounded-xl flex items-center justify-center text-2xl"
+                      className="w-12 h-12 bg-muted rounded-xl overflow-hidden"
                     >
-                      {thumb}
+                      <StickerImage
+                        src={thumb}
+                        alt={`${item.name} sticker ${i + 1}`}
+                        className="w-full h-full"
+                        fallbackEmoji={['😂', '💕'][i % 2]}
+                      />
                     </div>
                   ))}
                 </div>

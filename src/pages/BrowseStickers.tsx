@@ -3,7 +3,18 @@ import { ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import CategoryCard from '@/components/CategoryCard';
 import StickerPackCard from '@/components/StickerPackCard';
+import StickerImage from '@/components/StickerImage';
 import { categories, getStickersByCategory, getCategoryById } from '@/data/stickers';
+
+// Fallback emojis for each category
+const categoryEmojis: Record<string, string> = {
+  funny: '😂',
+  romantic: '💕',
+  savage: '🔥',
+  desi: '🇮🇳',
+  anime: '🎌',
+  daily: '✨',
+};
 
 const BrowseStickers = () => {
   const { categoryId } = useParams();
@@ -37,11 +48,23 @@ const BrowseStickers = () => {
 
           {/* Category header */}
           <div className={`rounded-3xl p-8 mb-10 bg-gradient-to-br ${category.color} text-primary-foreground relative overflow-hidden`}>
-            <div className="absolute -right-10 -bottom-10 text-[12rem] opacity-20">
-              {category.emoji}
+            <div className="absolute -right-10 -bottom-10 w-48 h-48 opacity-20">
+              <StickerImage
+                src={category.image}
+                alt={category.name}
+                className="w-full h-full rounded-3xl"
+                fallbackEmoji={categoryEmojis[category.id] || '🎭'}
+              />
             </div>
             <div className="relative z-10">
-              <span className="text-5xl mb-4 block animate-wiggle">{category.emoji}</span>
+              <div className="w-20 h-20 mb-4 rounded-2xl overflow-hidden bg-white/20 animate-wiggle">
+                <StickerImage
+                  src={category.image}
+                  alt={category.name}
+                  className="w-full h-full"
+                  fallbackEmoji={categoryEmojis[category.id] || '🎭'}
+                />
+              </div>
               <h1 className="font-poppins text-4xl font-bold mb-2">{category.name}</h1>
               <p className="text-lg opacity-90">{category.description}</p>
             </div>
