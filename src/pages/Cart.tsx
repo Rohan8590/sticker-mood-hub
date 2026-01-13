@@ -2,13 +2,14 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Trash2, ArrowRight, ShoppingBag, CheckCircle, Download, Home, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useCart } from '@/context/CartContext';
+import { useCart, CartItem } from '@/context/CartContext';
 import { toast } from 'sonner';
 
 const Cart = () => {
   const { items, removeFromCart, clearCart, totalPrice } = useCart();
   const [showPayment, setShowPayment] = useState(false);
   const [isPaid, setIsPaid] = useState(false);
+  const [purchasedItems, setPurchasedItems] = useState<CartItem[]>([]);
 
   const handleRemove = (id: string, name: string) => {
     removeFromCart(id);
@@ -20,19 +21,51 @@ const Cart = () => {
   };
 
   const handlePaymentConfirm = () => {
+    // Save items before marking as paid
+    setPurchasedItems([...items]);
     setIsPaid(true);
     toast.success("Thank you for your purchase! 🎉");
-    
-    // Simulate download start
-    setTimeout(() => {
-      items.forEach((item) => {
-        toast.info(`Downloading ${item.name}...`, { duration: 2000 });
-      });
-    }, 500);
+    clearCart();
   };
 
-  const handleDownloadComplete = () => {
-    clearCart();
+  const handleDownloadAll = () => {
+    purchasedItems.forEach((item, index) => {
+      setTimeout(() => {
+        downloadStickerPack(item);
+      }, index * 500);
+    });
+  };
+
+  const downloadStickerPack = (item: CartItem) => {
+    // Create a text file with sticker pack info (simulating download)
+    const content = `
+Sticker Pack: ${item.name}
+Category: ${item.categoryId}
+Description: ${item.description}
+
+Thank you for purchasing from Sticker.mood! 💜
+
+Stickers included: ${item.thumbnails.join(' ')}
+
+To use these stickers:
+1. Open WhatsApp/Telegram
+2. Go to sticker settings
+3. Import this sticker pack
+
+Enjoy adding mood to your chats! ✨
+    `.trim();
+
+    const blob = new Blob([content], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `${item.name.replace(/\s+/g, '_')}_sticker_pack.txt`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+    
+    toast.success(`Downloaded: ${item.name} 🎉`);
   };
 
   // Empty cart
@@ -68,33 +101,50 @@ const Cart = () => {
             </div>
             <h1 className="font-poppins text-4xl font-bold mb-4">Thank You! 💜</h1>
             <p className="text-muted-foreground text-lg mb-8">
-              Thank you for adding more mood to your chats! Your stickers are downloading now ✨
+              Thank you for adding more mood to your chats! Click below to download your stickers ✨
             </p>
 
-            {/* Downloaded items */}
+            {/* Purchased items */}
             <div className="bg-card rounded-3xl p-6 mb-8 shadow-card border border-border">
               <h3 className="font-poppins font-bold mb-4">Your Stickers:</h3>
               <div className="space-y-3">
-                {items.map((item) => (
+                {purchasedItems.map((item) => (
                   <div key={item.id} className="flex items-center justify-between p-3 bg-muted rounded-2xl">
                     <div className="flex items-center gap-3">
                       <span className="text-2xl">{item.thumbnails[0]}</span>
                       <span className="font-semibold">{item.name}</span>
                     </div>
-                    <Download className="h-5 w-5 text-lime animate-bounce-slow" />
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => downloadStickerPack(item)}
+                      className="text-lime hover:text-lime hover:bg-lime/10"
+                    >
+                      <Download className="h-5 w-5" />
+                    </Button>
                   </div>
                 ))}
               </div>
             </div>
 
+            {/* Download All Button */}
+            <Button
+              variant="playful"
+              size="lg"
+              className="w-full mb-6"
+              onClick={handleDownloadAll}
+            >
+              <Download className="h-5 w-5" /> Download All Stickers
+            </Button>
+
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link to="/browse">
-                <Button variant="hero" size="lg" onClick={handleDownloadComplete}>
+                <Button variant="hero" size="lg">
                   Browse More Stickers <ArrowRight className="h-4 w-4" />
                 </Button>
               </Link>
               <Link to="/">
-                <Button variant="outline" size="lg" onClick={handleDownloadComplete}>
+                <Button variant="outline" size="lg">
                   <Home className="h-4 w-4" /> Go to Home
                 </Button>
               </Link>
