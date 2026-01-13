@@ -13,6 +13,7 @@ const Navbar = () => {
     { path: '/', label: 'Home' },
     { path: '/browse', label: 'Browse Stickers' },
     { path: '/why-stickers', label: 'Why Stickers' },
+    { path: '/orders', label: 'My Orders' },
     { path: '/about', label: 'About' },
   ];
 

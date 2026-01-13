@@ -1,15 +1,18 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Trash2, ArrowRight, ShoppingBag, CheckCircle, Download, Home, ArrowLeft } from 'lucide-react';
+import { Trash2, ArrowRight, ShoppingBag, CheckCircle, Download, Home, ArrowLeft, History } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useCart, CartItem } from '@/context/CartContext';
 import { toast } from 'sonner';
+import JSZip from 'jszip';
+import { Order } from './OrderHistory';
 
 const Cart = () => {
   const { items, removeFromCart, clearCart, totalPrice } = useCart();
   const [showPayment, setShowPayment] = useState(false);
   const [isPaid, setIsPaid] = useState(false);
   const [purchasedItems, setPurchasedItems] = useState<CartItem[]>([]);
+  const [currentOrderId, setCurrentOrderId] = useState<string>('');
 
   const handleRemove = (id: string, name: string) => {
     removeFromCart(id);
@@ -20,28 +23,103 @@ const Cart = () => {
     setShowPayment(true);
   };
 
+  const generateOrderId = () => {
+    return Math.random().toString(36).substring(2, 8).toUpperCase();
+  };
+
+  const saveOrder = (orderItems: CartItem[], orderId: string) => {
+    const now = new Date();
+    const order: Order = {
+      id: orderId,
+      items: orderItems,
+      totalPrice: orderItems.reduce((sum, item) => sum + item.price, 0),
+      date: now.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }),
+      time: now.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' }),
+    };
+
+    const existingOrders = JSON.parse(localStorage.getItem('stickermood-orders') || '[]');
+    localStorage.setItem('stickermood-orders', JSON.stringify([order, ...existingOrders]));
+  };
+
   const handlePaymentConfirm = () => {
-    // Save items before marking as paid
+    const orderId = generateOrderId();
     setPurchasedItems([...items]);
+    setCurrentOrderId(orderId);
+    saveOrder([...items], orderId);
     setIsPaid(true);
     toast.success("Thank you for your purchase! 🎉");
     clearCart();
   };
 
-  const handleDownloadAll = () => {
-    purchasedItems.forEach((item, index) => {
-      setTimeout(() => {
-        downloadStickerPack(item);
-      }, index * 500);
+  const downloadAllAsZip = async () => {
+    const zip = new JSZip();
+    
+    // Create main folder
+    const mainFolder = zip.folder(`StickerMood_Order_${currentOrderId}`);
+    if (!mainFolder) return;
+
+    // Add README
+    mainFolder.file('README.txt', `
+🎭 Sticker.mood Order #${currentOrderId}
+================================
+Thank you for your purchase! 💜
+
+This ZIP contains ${purchasedItems.length} sticker pack(s).
+Each pack has its own folder with sticker info.
+
+To use these stickers:
+1. Open WhatsApp/Telegram
+2. Go to sticker settings
+3. Import the sticker packs
+
+Enjoy adding mood to your chats! ✨
+    `.trim());
+
+    // Add each sticker pack as a subfolder
+    purchasedItems.forEach((item) => {
+      const packFolder = mainFolder.folder(item.name.replace(/\s+/g, '_'));
+      if (packFolder) {
+        packFolder.file('pack_info.txt', `
+Sticker Pack: ${item.name}
+Category: ${item.category}
+Description: ${item.description}
+Price: ₹${item.price}
+
+Stickers included: ${item.thumbnails.join(' ')}
+        `.trim());
+        
+        // Create placeholder sticker files
+        item.thumbnails.forEach((emoji, index) => {
+          packFolder.file(`sticker_${index + 1}.txt`, `Sticker ${index + 1}: ${emoji}`);
+        });
+      }
     });
+
+    // Generate and download ZIP
+    const content = await zip.generateAsync({ type: 'blob' });
+    const url = URL.createObjectURL(content);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `StickerMood_Order_${currentOrderId}.zip`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+    
+    toast.success(`Downloaded all stickers as ZIP! 🎉`);
   };
 
-  const downloadStickerPack = (item: CartItem) => {
-    // Create a text file with sticker pack info (simulating download)
-    const content = `
+  const downloadSinglePack = async (item: CartItem) => {
+    const zip = new JSZip();
+    
+    const packFolder = zip.folder(item.name.replace(/\s+/g, '_'));
+    if (!packFolder) return;
+
+    packFolder.file('pack_info.txt', `
 Sticker Pack: ${item.name}
-Category: ${item.categoryId}
+Category: ${item.category}
 Description: ${item.description}
+Price: ₹${item.price}
 
 Thank you for purchasing from Sticker.mood! 💜
 
@@ -53,13 +131,18 @@ To use these stickers:
 3. Import this sticker pack
 
 Enjoy adding mood to your chats! ✨
-    `.trim();
+    `.trim());
+    
+    // Create placeholder sticker files
+    item.thumbnails.forEach((emoji, index) => {
+      packFolder.file(`sticker_${index + 1}.txt`, `Sticker ${index + 1}: ${emoji}`);
+    });
 
-    const blob = new Blob([content], { type: 'text/plain' });
-    const url = URL.createObjectURL(blob);
+    const content = await zip.generateAsync({ type: 'blob' });
+    const url = URL.createObjectURL(content);
     const link = document.createElement('a');
     link.href = url;
-    link.download = `${item.name.replace(/\s+/g, '_')}_sticker_pack.txt`;
+    link.download = `${item.name.replace(/\s+/g, '_')}.zip`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -106,7 +189,10 @@ Enjoy adding mood to your chats! ✨
 
             {/* Purchased items */}
             <div className="bg-card rounded-3xl p-6 mb-8 shadow-card border border-border">
-              <h3 className="font-poppins font-bold mb-4">Your Stickers:</h3>
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="font-poppins font-bold">Your Stickers:</h3>
+                <span className="text-sm text-muted-foreground">Order #{currentOrderId}</span>
+              </div>
               <div className="space-y-3">
                 {purchasedItems.map((item) => (
                   <div key={item.id} className="flex items-center justify-between p-3 bg-muted rounded-2xl">
@@ -117,7 +203,7 @@ Enjoy adding mood to your chats! ✨
                     <Button
                       variant="ghost"
                       size="sm"
-                      onClick={() => downloadStickerPack(item)}
+                      onClick={() => downloadSinglePack(item)}
                       className="text-lime hover:text-lime hover:bg-lime/10"
                     >
                       <Download className="h-5 w-5" />
@@ -132,12 +218,12 @@ Enjoy adding mood to your chats! ✨
               variant="playful"
               size="lg"
               className="w-full mb-6"
-              onClick={handleDownloadAll}
+              onClick={downloadAllAsZip}
             >
-              <Download className="h-5 w-5" /> Download All Stickers
+              <Download className="h-5 w-5" /> Download All as ZIP
             </Button>
 
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <div className="flex flex-col sm:flex-row gap-4 justify-center mb-4">
               <Link to="/browse">
                 <Button variant="hero" size="lg">
                   Browse More Stickers <ArrowRight className="h-4 w-4" />
@@ -149,6 +235,12 @@ Enjoy adding mood to your chats! ✨
                 </Button>
               </Link>
             </div>
+
+            <Link to="/orders" className="inline-block">
+              <Button variant="ghost" size="sm" className="text-muted-foreground">
+                <History className="h-4 w-4" /> View Order History
+              </Button>
+            </Link>
           </div>
         </div>
       </div>

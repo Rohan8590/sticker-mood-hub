@@ -10,6 +10,7 @@ import Index from "./pages/Index";
 import BrowseStickers from "./pages/BrowseStickers";
 import WhyStickers from "./pages/WhyStickers";
 import Cart from "./pages/Cart";
+import OrderHistory from "./pages/OrderHistory";
 import About from "./pages/About";
 import NotFound from "./pages/NotFound";
 
@@ -31,6 +32,7 @@ const App = () => (
                 <Route path="/browse/:categoryId" element={<BrowseStickers />} />
                 <Route path="/why-stickers" element={<WhyStickers />} />
                 <Route path="/cart" element={<Cart />} />
+                <Route path="/orders" element={<OrderHistory />} />
                 <Route path="/about" element={<About />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
