@@ -9,9 +9,8 @@ interface CategoryCardProps {
 // Fallback emojis for each category
 const categoryEmojis: Record<string, string> = {
   funny: '😂',
-  romantic: '💕',
+  animal: '🐕',
   savage: '🔥',
-  desi: '🇮🇳',
   anime: '🎌',
   daily: '✨',
 };

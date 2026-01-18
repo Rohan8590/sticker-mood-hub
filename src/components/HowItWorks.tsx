@@ -3,7 +3,7 @@ import { Search, ShoppingCart, Download } from 'lucide-react';
 const steps = [
   {
     icon: Search,
-    title: 'Browse Sticker Packs',
+    title: 'Browse Stickers',
     description: 'Explore fun categories and find your vibe',
     emoji: '🔍',
   },

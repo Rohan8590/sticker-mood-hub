@@ -32,7 +32,9 @@ const Index = () => {
           <div className="animate-slide-up">
             <div className="inline-flex items-center gap-2 bg-muted rounded-full px-4 py-2 mb-6">
               <Sparkles className="h-4 w-4 text-primary" />
-              <span className="text-sm font-semibold text-muted-foreground">Express yourself like never before!</span>
+              <span className="text-sm font-semibold text-muted-foreground">
+                Express yourself like never before!
+              </span>
             </div>
 
             <h1 className="font-poppins text-5xl md:text-7xl font-bold mb-6 leading-tight">
@@ -59,6 +61,25 @@ const Index = () => {
                 </Button>
               </Link>
             </div>
+
+            {/* Added Steps Text */}
+           <div className="mt-8 mb-24 max-w-3xl mx-auto text-left text-sm md:text-base text-muted-foreground leading-relaxed space-y-1">
+            <h1>🎉 How to Add these Stickers to WhatsApp</h1>
+            <p>Step 1 – Browse and select your sticker category and subcategory</p>
+            <p>Step 2 – Click Add to include the sticker pack and review it in your Cart</p>
+            <p>Step 3 – Proceed to Checkout</p>
+            <p>Step 4 – Download the sticker pack (files are downloaded as PNG images)</p>
+            <p>
+              Step 5 – Open WhatsApp → Stickers → Add Stickers, upload the downloaded PNGs,
+              and start using them
+            </p>
+          </div>
+          <div className="mt-8 mb-24 max-w-3xl mx-auto text-left text-sm md:text-base text-muted-foreground leading-relaxed space-y-1">
+            <h1>🖨️ Want These Stickers in Physical Form?</h1>
+            <p>Step 1 – Scan the QR Code shown on the screen</p>
+            <p>Step 2 – Complete the secure payment</p>
+            <p>Step 3 – Fill out a quick Google Form with your delivery details</p>
+          </div>
           </div>
         </div>
 
@@ -77,7 +98,9 @@ const Index = () => {
             <h2 className="font-poppins text-3xl md:text-4xl font-bold mb-4">
               Featured Categories <span className="inline-block animate-wiggle">🌈</span>
             </h2>
-            <p className="text-muted-foreground text-lg">Pick your vibe, express your mood!</p>
+            <p className="text-muted-foreground text-lg">
+              Pick your vibe, express your mood!
+            </p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">

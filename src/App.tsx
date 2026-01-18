@@ -13,6 +13,7 @@ import Cart from "./pages/Cart";
 import OrderHistory from "./pages/OrderHistory";
 import About from "./pages/About";
 import NotFound from "./pages/NotFound";
+import RouteTracker from "@/analytics/RouteTracker";
 
 const queryClient = new QueryClient();
 
@@ -23,6 +24,9 @@ const App = () => (
         <Toaster />
         <Sonner />
         <BrowserRouter>
+          {/* Google Analytics Route Tracking */}
+          <RouteTracker />
+
           <div className="min-h-screen flex flex-col">
             <Navbar />
             <main className="flex-1">

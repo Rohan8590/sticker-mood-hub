@@ -296,22 +296,14 @@ Enjoy adding mood to your chats! ✨
               <div className="bg-card rounded-2xl p-6 mb-6 inline-block border-4 border-dashed border-border">
                 <div className="w-48 h-48 bg-gradient-to-br from-foreground/5 to-foreground/10 rounded-xl flex items-center justify-center relative overflow-hidden">
                   {/* Simulated QR pattern */}
-                  <div className="absolute inset-4 grid grid-cols-8 gap-1">
-                    {Array.from({ length: 64 }).map((_, i) => (
-                      <div
-                        key={i}
-                        className={`rounded-sm ${
-                          Math.random() > 0.5 ? 'bg-foreground' : 'bg-transparent'
-                        }`}
-                      />
-                    ))}
-                  </div>
-                  {/* Center logo */}
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="bg-card p-2 rounded-lg">
-                      <span className="text-2xl">💳</span>
-                    </div>
-                  </div>
+                  <StickerImage
+                    src="/qr/upi-qr.png"
+                    alt="UPI QR Code"
+                    className="w-full h-full object-contain"
+                    fallbackEmoji="💳"
+                  />
+
+                  
                 </div>
               </div>
 
