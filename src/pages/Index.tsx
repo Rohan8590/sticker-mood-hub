@@ -45,7 +45,7 @@ const Index = () => {
 
             <p className="text-xl md:text-2xl text-muted-foreground max-w-2xl mx-auto mb-10">
               Discover expressive sticker packs for WhatsApp, Telegram & more.{' '}
-              <span className="text-primary font-semibold">Just ₹1 per pack!</span>
+              <span className="text-primary font-semibold">Just ₹10 per pack!</span>
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
