@@ -168,7 +168,7 @@ const BrowseStickers = () => {
 
             <div>
               <div className="font-poppins text-3xl font-bold gradient-text">
-                ₹1
+                ₹10
               </div>
               <div className="text-sm text-muted-foreground">
                 Per Pack
