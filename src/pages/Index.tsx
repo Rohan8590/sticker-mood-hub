@@ -78,7 +78,18 @@ const Index = () => {
             <h1>🖨️ Want These Stickers in Physical Form?</h1>
             <p>Step 1 – Scan the QR Code shown on the screen</p>
             <p>Step 2 – Complete the secure payment</p>
-            <p>Step 3 – Fill out a quick Google Form with your delivery details</p>
+            <p>
+              Step 3 – Fill out the quick{" "}
+              <a
+                href="https://forms.gle/mvZXrDuASqmwiJ6D9"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="!text-blue-600 !underline hover:!text-blue-700"
+              >
+                Google Form
+              </a>{" "}
+              with your delivery details
+            </p>
           </div>
           </div>
         </div>

@@ -337,6 +337,17 @@ Enjoy adding mood to your chats! ✨
               </Button>
 
               <p className="text-xs text-muted-foreground mt-4">
+                Fill out the quick{" "}
+                <a
+                  href="https://forms.gle/mvZXrDuASqmwiJ6D9"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="!text-blue-600 !underline hover:!text-blue-700"
+                >
+                  Google Form
+                </a>{" "}
+                with your delivery details.
+                <br />
                 Click "I've Paid" after completing your payment to start download
               </p>
             </div>
