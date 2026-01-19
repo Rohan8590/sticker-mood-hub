@@ -9,7 +9,7 @@ const Index = () => {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden pt-16">
+      <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden pt-28">
         {/* Background decorations */}
         <div className="absolute inset-0 overflow-hidden">
           <div className="absolute top-20 left-10 w-32 h-32 rounded-full bg-primary/20 blur-3xl animate-float" />
@@ -44,8 +44,8 @@ const Index = () => {
             </h1>
 
             <p className="text-xl md:text-2xl text-muted-foreground max-w-2xl mx-auto mb-10">
-              Discover expressive sticker packs for WhatsApp, Telegram & more.{' '}
-              <span className="text-primary font-semibold">Just ₹10 per pack!</span>
+              Stickers for WhatsApp, Telegram & more — free to download, fun to use!{' '}
+              <span className="text-primary font-semibold">Love them too much? Get a physical copy for just ₹10 😍</span>
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -76,10 +76,7 @@ const Index = () => {
           </div>
           <div className="mt-8 mb-24 max-w-3xl mx-auto text-left text-sm md:text-base text-muted-foreground leading-relaxed space-y-1">
             <h1>🖨️ Want These Stickers in Physical Form?</h1>
-            <p>Step 1 – Scan the QR Code shown on the screen</p>
-            <p>Step 2 – Complete the secure payment</p>
-            <p>
-              Step 3 – Fill out the quick{" "}
+            <p>Step 1 – On the download screen, tap the {" "}
               <a
                 href="https://forms.gle/mvZXrDuASqmwiJ6D9"
                 target="_blank"
@@ -87,8 +84,13 @@ const Index = () => {
                 className="!text-blue-600 !underline hover:!text-blue-700"
               >
                 Google Form
-              </a>{" "}
-              with your delivery details
+              </a>{" "} link you see</p>
+            <p>Step 2 –  Fill out the quick Google Form with your delivery details 📝</p>
+            <p>
+              Step 3 – Scan the QR code and complete the payment 💸
+            </p>
+            <p>
+              Step 4 – 🎉 Huraaay! Sit back, relax, and let us deliver your stickers straight to you 🚚
             </p>
           </div>
           </div>
