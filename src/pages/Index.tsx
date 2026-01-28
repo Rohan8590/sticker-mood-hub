@@ -45,7 +45,7 @@ const Index = () => {
 
             <p className="text-xl md:text-2xl text-muted-foreground max-w-2xl mx-auto mb-10">
               Stickers for WhatsApp, Telegram & more — free to download, fun to use!{' '}
-              <span className="text-primary font-semibold">Love them too much? Get a physical copy for just ₹10 😍</span>
+              <span className="text-primary font-semibold">Love them too much? Get a physical copy for just ₹15 😍</span>
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
